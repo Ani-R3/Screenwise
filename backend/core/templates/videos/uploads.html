@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Upload Video - BOA{% endblock %}
+
+{% block content %}
+<div class="flex-1 px-6 py-20 md:px-8 lg:px-12">
+    <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-normal leading-tight mb-6">
+                <span class="text-black">Upload your knowledge.</span>
+                <br />
+                <span class="text-gray-400">Inspire others to learn.</span>
+            </h1>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                Share your expertise through video tutorials and help build a global community of learners.
+            </p>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
+            <form method="post" enctype="multipart/form-data" class="space-y-8">
+                {% csrf_token %}
+                
+                {% if form.errors %}
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <p class="text-red-600 text-sm">{{ error }}</p>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Video Upload Area -->
+                <div class="space-y-4">
+                    <label for="{{ form.video_file.id_for_label }}" class="text-base font-medium">
+                        Upload Video
+                    </label>
+                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center hover:border-gray-400 transition-colors"
+                         id="drop-zone">
+                        <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                        </svg>
+                        <p class="text-lg text-gray-600 mb-2">
+                            Drag and drop your video here, or click to browse
+                        </p>
+                        <p class="text-sm text-gray-500 mb-4">
+                            Supports MP4, MOV, AVI up to 500MB
+                        </p>
+                        <button type="button" 
+                                class="border border-gray-300 hover:border-black px-4 py-2 rounded-lg transition-colors"
+                                onclick="document.getElementById('{{ form.video_file.id_for_label }}').click()">
+                            <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            Choose File
+                        </button>
+                        <input type="file" 
+                               name="{{ form.video_file.name }}" 
+                               id="{{ form.video_file.id_for_label }}"
+                               accept="video/*" 
+                               class="hidden">
+                    </div>
+                </div>
+
+                <!-- Video Details -->
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label for="{{ form.title.id_for_label }}" class="text-base font-medium">
+                            Video Title
+                        </label>
+                        <input type="text" 
+                               name="{{ form.title.name }}" 
+                               id="{{ form.title.id_for_label }}"
+                               placeholder="Enter a descriptive title"
+                               class="w-full h-12 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                               required>
+                    </div>
+                    <div class="space-y-2">
+                        <label for="{{ form.category.id_for_label }}" class="text-base font-medium">
+                            Category
+                        </label>
+                        <select name="{{ form.category.name }}" 
+                                id="{{ form.category.id_for_label }}"
+                                class="w-full h-12 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent">
+                            <option value="">Select a category</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="{{ form.description.id_for_label }}" class="text-base font-medium">
+                        Description
+                    </label>
+                    <textarea name="{{ form.description.name }}" 
+                              id="{{ form.description.id_for_label }}"
+                              placeholder="Describe what viewers will learn from your video..."
+                              rows="4"
+                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                              required></textarea>
+                </div>
+
+                <!-- Tags -->
+                <div class="space-y-2">
+                    <label for="{{ form.tags.id_for_label }}" class="text-base font-medium">
+                        Tags
+                    </label>
+                    <input type="text" 
+                           name="{{ form.tags.name }}" 
+                           id="{{ form.tags.id_for_label }}"
+                           placeholder="Add tags separated by commas (e.g., tutorial, beginner, javascript)"
+                           class="w-full h-12 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent">
+                </div>
+
+                <!-- Thumbnail -->
+                <div class="space-y-2">
+                    <label for="{{ form.thumbnail.id_for_label }}" class="text-base font-medium">
+                        Thumbnail (Optional)
+                    </label>
+                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-gray-400 transition-colors">
+                        <svg class="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                        </svg>
+                        <p class="text-gray-600 mb-2">Upload custom thumbnail</p>
+                        <p class="text-sm text-gray-500 mb-4">JPG, PNG up to 5MB</p>
+                        <button type="button" 
+                                class="border border-gray-300 hover:border-black px-4 py-2 rounded-lg transition-colors text-sm"
+                                onclick="document.getElementById('{{ form.thumbnail.id_for_label }}').click()">
+                            Choose Image
+                        </button>
+                        <input type="file" 
+                               name="{{ form.thumbnail.name }}" 
+                               id="{{ form.thumbnail.id_for_label }}"
+                               accept="image/*" 
+                               class="hidden">
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="flex gap-4 pt-6">
+                    <button type="submit" 
+                            name="status" 
+                            value="draft"
+                            class="flex-1 h-12 border border-gray-300 hover:border-black rounded-lg transition-colors">
+                        Save as Draft
+                    </button>
+                    <button type="submit" 
+                            name="status" 
+                            value="published"
+                            class="flex-1 h-12 bg-black text-white hover:bg-gray-800 rounded-lg transition-colors">
+                        Publish Video
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// File upload functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('{{ form.video_file.id_for_label }}');
+
+    // Prevent default drag behaviors
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+    });
+
+    // Highlight drop area when item is dragged over it
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, unhighlight, false);
+    });
+
+    // Handle dropped files
+    dropZone.addEventListener('drop', handleDrop, false);
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    function highlight(e) {
+        dropZone.classList.add('border-black', 'bg-gray-50');
+    }
+
+    function unhighlight(e) {
+        dropZone.classList.remove('border-black', 'bg-gray-50');
+    }
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        
+        if (files.length > 0) {
+            fileInput.files = files;
+            updateFileName(files[0].name);
+        }
+    }
+
+    // Update filename display when file is selected
+    fileInput.addEventListener('change', function(e) {
+        if (e.target.files.length > 0) {
+            updateFileName(e.target.files[0].name);
+        }
+    });
+
+    function updateFileName(fileName) {
+        const dropZoneText = dropZone.querySelector('p');
+        dropZoneText.textContent = `Selected: ${fileName}`;
+    }
+});
+</script>
+{% endblock %}
