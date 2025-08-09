@@ -35,7 +35,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
-
+    
+    def __str__(self):
+        return self.username
+    
 class Video(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)

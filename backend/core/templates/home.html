@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Screenwise - Share your knowledge. Build your legacy.{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="flex-1 flex items-center justify-center px-6 py-20">
+    <div class="text-center max-w-4xl">
+        <h1 class="text-5xl md:text-6xl lg:text-7xl font-normal leading-tight mb-6">
+            <span class="text-black">Share your knowledge.</span>
+            <br />
+            <span class="text-gray-400">Build your legacy.</span>
+        </h1>
+        
+        <p class="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto mb-12">
+            Join a global community of creators and learners. Upload tutorials, discover new skills, and build your profile with educational content.
+        </p>
+        
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'upload' %}" class="bg-black text-white px-8 py-3 rounded-full hover:bg-gray-800 transition-colors text-sm font-medium">
+                Get Started
+            </a>
+            <button class="px-8 py-3 rounded-full border border-gray-300 hover:border-black transition-colors text-sm font-medium">
+                <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-9-10h10c.553 0 1 .447 1 1v14c0 .553-.447 1-1 1H8c-.553 0-1-.447-1-1V5c0-.553.447-1 1-1z"></path>
+                </svg>
+                Watch Demo
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section class="px-6 py-20 md:px-8 lg:px-12 border-t border-gray-100">
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-normal mb-4">
+                <span class="text-black">Why creators choose</span>
+                <span class="text-gray-400">Screenwise</span>
+            </h2>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                The platform designed specifically for knowledge sharing and educational content creation.
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-12">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-medium mb-4">Global Community</h3>
+                <p class="text-gray-600">
+                    Connect with learners and creators from around the world. Build your audience and grow your impact.
+                </p>
+            </div>
+
+            <div class="text-center">
+                <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-medium mb-4">Knowledge Sharing</h3>
+                <p class="text-gray-600">
+                    Share your expertise through video tutorials and help others learn new skills and advance their careers.
+                </p>
+            </div>
+
+            <div class="text-center">
+                <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-medium mb-4">Track Progress</h3>
+                <p class="text-gray-600">
+                    Monitor your productivity, track engagement, and see how your content is making a difference.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="px-6 py-20 md:px-8 lg:px-12 bg-gray-50">
+    <div class="max-w-4xl mx-auto text-center">
+        <h2 class="text-3xl md:text-4xl font-normal mb-6">
+            <span class="text-black">Ready to inspire?</span>
+            <br />
+            <span class="text-gray-400">Start creating today.</span>
+        </h2>
+        <p class="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
+            Join thousands of creators who are already sharing their knowledge and building their legacy on Screenwise.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'upload' %}" class="bg-black text-white px-8 py-3 rounded-full hover:bg-gray-800 transition-colors text-sm font-medium">
+                Upload Your First Video
+            </a>
+            <a href="{% url 'login' %}" class="px-8 py-3 rounded-full border border-gray-300 hover:border-black transition-colors text-sm font-medium">
+                Create Account
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

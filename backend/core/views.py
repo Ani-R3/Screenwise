@@ -7,13 +7,34 @@ from social_django.models import UserSocialAuth
 
 
 
+# def login(request):
+#     text = "hello ji"
+#     template = loader.get_template('auth/login.html')
+#     context  = {'text' : text}
+#     res = template.render(context, request)
+#    return HttpResponse(res)
+
 def login(request):
-    text = "hello ji"
-    template = loader.get_template('login.html')
-    context  = {'text' : text}
-    res = template.render(context, request)
-    
-    return HttpResponse(res)
+    return render(request, 'auth/login.html', {'text': 'Home'})
+
+
+
+## returning home 
+def home(request):
+    return render(request,'home.html')
+
+
+##returning upload
+
+def upload_video(request):
+    return render(request, 'videos/uploads.html')
+
+
+##returning the dashboard
+def dashboard_page(request):
+    return render(request, 'dashboard.html')
+
+
 ##fuction for getting the youtube data
 def get_youtube_data(request):
     """
