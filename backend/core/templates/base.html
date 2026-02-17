@@ -22,7 +22,7 @@
     
     {% block extra_css %}{% endblock %}
 </head>
-<body class="min-h-screen bg-white font-sans">
+<body data-signup-error="{{ signup_error|yesno:'true,false' }}" class="min-h-screen bg-white font-sans">
     {% include 'components/header.html' %}
     
     <main>

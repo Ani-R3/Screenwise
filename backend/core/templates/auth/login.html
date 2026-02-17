@@ -14,21 +14,20 @@
             </h1>
         </div>
 
-        <!-- LOGIN FORM -->
-        <div id="loginForm" class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
-            <form id="loginFormElement" method="post" class="space-y-6">
+        <div id="loginForm" class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm" {% if signup_error %}style="display: none;"{% endif %}>
+            <form id="loginFormElement" method="post" action="{% url 'accounts:login' %}" class="space-y-6">
                 {% csrf_token %}
                 
-                {% if form.errors %}
+                {% if login_form.errors %}
                     <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-                        {% for field in form %}
+                        {% for field in login_form %}
                             {% for error in field.errors %}
                                 <p class="text-red-600 text-sm">{{ error }}</p>
                             {% endfor %}
                         {% endfor %}
-                        {% for error in form.non_field_errors %}
+                        {% for error in login_form.non_field_errors %}
                             <p class="text-red-600 text-sm">{{ error }}</p>
-                        {% endfor %}
+                         {% endfor %}
                     </div>
                 {% endif %}
 
@@ -37,7 +36,7 @@
                         Email or Username
                     </label>
                     <input type="text" 
-                           name="{{ form.username.name }}" 
+                           name="{{ login_form.username.name }}" 
                            id="login-email"
                            placeholder="Enter your email or username"
                            class="w-full h-12 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
@@ -50,7 +49,7 @@
                     </label>
                     <div class="relative">
                         <input type="password" 
-                               name="{{ form.password.name }}" 
+                               name="{{ login_form.password.name }}" 
                                id="login-password"
                                placeholder="Enter your password"
                                class="w-full h-12 px-3 py-2 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
@@ -76,17 +75,16 @@
                             Remember me
                         </label>
                     </div>
-                    <a href="#" class="text-sm text-gray-600 hover:text-black">
+                    <a href="{% url 'accounts:password_reset' %}" class="text-sm text-gray-600 hover:text-black">
                         Forgot password?
                     </a>
                 </div>
 
-                <button id="loginBtn" type="submit" 
+                <button id="loginBtn" type="submit" name="login_submit"
                         class="w-full h-12 bg-black text-white hover:bg-gray-800 rounded-lg transition-colors">
                     Sign In
                 </button>
 
-                <!-- Divider -->
                 <div class="relative">
                     <div class="absolute inset-0 flex items-center">
                         <div class="w-full border-t border-gray-300"></div>
@@ -96,7 +94,6 @@
                     </div>
                 </div>
 
-                <!-- Social Login -->
                 <div class="grid grid-cols-2 gap-4">
                     <button id="googleLoginBtn" type="button" 
                             class="h-12 border border-gray-300 hover:border-gray-400 rounded-lg flex items-center justify-center transition-colors">
@@ -119,14 +116,12 @@
             </form>
         </div>
 
-        <!-- SIGN UP FORM -->
-        <div id="signUpForm" class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm" style="display: none;">
+        <div id="signUpForm" class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm" s {% if not signup_error %}style="display: none;"{% endif %}">
             <div class="text-center mb-6">
                 <h1 class="text-2xl font-semibold mb-2">Create Account</h1>
                 <p class="text-gray-600">Join Screenwise to start managing your screen time</p>
             </div>
 
-            <!-- Social Login for Sign Up -->
             <div class="grid grid-cols-2 gap-4 mb-6">
                 <button id="googleSignUpBtn" type="button" 
                         class="h-12 border border-gray-300 hover:border-gray-400 rounded-lg flex items-center justify-center transition-colors">
@@ -147,7 +142,6 @@
                 </button>
             </div>
 
-            <!-- Divider -->
             <div class="relative mb-6">
                 <div class="absolute inset-0 flex items-center">
                     <div class="w-full border-t border-gray-300"></div>
@@ -157,56 +151,70 @@
                 </div>
             </div>
 
-            <form id="signUpFormElement" class="space-y-4">
+            <!-- Sign Up Form -->
+            <form id="signUpFormElement" method="post" action="{% url 'accounts:login' %}" class="space-y-4">
+                {% csrf_token %}
+                {% if signup_form.errors and signup_error %}
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                        {% for field in signup_form %}
+                            {% for error in field.errors %}
+                                <p class="text-red-600 text-sm">{{ error }}</p>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in signup_form.non_field_errors %}
+                            <p class="text-red-600 text-sm">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                
                 <div class="space-y-2">
                     <label for="signup-email" class="text-base font-medium">
                         Email
                     </label>
                     <input type="email" 
                            id="signup-email"
+                           name="username"
                            placeholder="Enter your email"
                            class="w-full h-12 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                            required>
                 </div>
-
                 <div class="space-y-2">
                     <label for="signup-password" class="text-base font-medium">
                         Password
                     </label>
                     <input type="password" 
                            id="signup-password"
+                           name="password1" 
                            placeholder="Create a password"
                            class="w-full h-12 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                            required>
                 </div>
-
                 <div class="space-y-2">
                     <label for="signup-confirm-password" class="text-base font-medium">
                         Confirm Password
                     </label>
                     <input type="password" 
                            id="signup-confirm-password"
+                           name="password2"
                            placeholder="Confirm your password"
                            class="w-full h-12 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
                            required>
                 </div>
-
                 <div id="passwordError" class="text-red-600 text-sm" style="display: none;">
                     Passwords do not match
                 </div>
-
-                <button id="signUpBtn" type="submit" 
+                
+                <button id="signUpBtn" type="submit" name="signup_submit"
                         class="w-full h-12 bg-black text-white hover:bg-gray-800 rounded-lg transition-colors" disabled>
                     Create Account
                 </button>
-
                 <p class="text-sm text-gray-600 text-center">
                     By signing up, you agree to our Terms, Privacy Policy and Cookies Policy.
                 </p>
             </form>
         </div>
 
-        <!-- TOGGLE LOGIN/SIGNUP -->
         <div class="text-center mt-6 p-4 bg-gray-50 rounded-lg">
             <p class="text-gray-600">
                 <span id="toggleMessage">Don't have an account? </span>

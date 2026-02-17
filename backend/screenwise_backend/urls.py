@@ -22,9 +22,13 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('core/', include('core.urls')),
+    path('', include('core.urls')),
     path('accounts/', include('accounts.urls')),
+    path('profile/', include('profiles.urls')),
+    path('recommendations/', include('recommendations.urls')),
     path('oauth/', include('social_django.urls', namespace='social')),
+    path('', include('videos.urls')),
+    path('dashboard/', include('dashboard.urls')),
 ]
 
 if settings.DEBUG:

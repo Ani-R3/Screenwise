@@ -18,7 +18,7 @@
                     Track your videos, analyze performance, and monitor your learning journey.
                 </p>
             </div>
-            <a href="{% url 'upload' %}" class="bg-black text-white hover:bg-gray-800 px-6 py-3 rounded-lg transition-colors">
+            <a href="{% url 'videos:upload' %}" class="bg-black text-white hover:bg-gray-800 px-6 py-3 rounded-lg transition-colors">
                 <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
@@ -246,7 +246,7 @@
                 </div>
                 {% empty %}
                 <div class="p-6 text-center text-gray-500">
-                    You haven't uploaded any videos yet. <a href="{% url 'upload' %}" class="text-black hover:underline">Upload your first video</a>
+                    You haven't uploaded any videos yet. <a href="{% url 'videos:upload' %}" class="text-black hover:underline">Upload your first video</a>
                 </div>
                 {% endfor %}
             </div>

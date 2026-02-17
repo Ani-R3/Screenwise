@@ -25,16 +25,23 @@ SECRET_KEY = 'django-insecure-5zg5l^$!-d!!-*tu+3-cf7*_+48j^z_e_e)1dly&$d0ii53@-9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+## For the ngrok acess
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    ## my apps
     'core',
     'accounts',
+    'profiles',
+    'videos',  
+    'recommendations', 
+    'dashboard', 
     #added for the google login 
     'social_django',
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -46,12 +53,17 @@ INSTALLED_APPS = [
 #It’s a tuple/list that tells Django which authentication methods 
 # to try and in what order when someone tries to log in.
 AUTHENTICATION_BACKENDS = (
+    
+    
     #for google
     'social_core.backends.google.GoogleOAuth2',
     
     #for twitter
     'social_core.backends.twitter.TwitterOAuth',
     'social_core.backends.facebook.FacebookOAuth2',
+    
+    ##our backend 
+    'accounts.backends.EmailOrUsernameBackend',
     
     ##Django’s default backend.
     ##Allows login via username and password from the Django admin or your custom user forms.
@@ -75,7 +87,9 @@ ROOT_URLCONF = 'screenwise_backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR / 'core' / 'templates' #For the template location
+            ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -152,12 +166,43 @@ MEDIA_ROOT = BASE_DIR / 'media'
 AUTH_USER_MODEL = 'core.CustomUser'
 
 ##login details
-LOGIN_URL = 'login'
+LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'dashboard'
-LOGOUT_REDIRECT_URL = 'login'
+LOGOUT_REDIRECT_URL = 'accounts:login'
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = 'YOUR_GOOGLE_CLIENT_ID'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'YOUR_GOOGLE_CLIENT_SECRET'
 
 SOCIAL_AUTH_FACEBOOK_KEY = 'YOUR_FACEBOOK_APP_ID'
 SOCIAL_AUTH_FACEBOOK_SECRET = 'YOUR_FACEBOOK_APP_SECRET'
+
+
+
+# --- Email Configuration for Password Reset (Development) ---
+# This will print emails to the console instead of sending them.
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+
+
+
+
+
+
+# Find your existing ALLOWED_HOSTS list
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+
+# --- ADD THE FOLLOWING ---
+
+# Get your ngrok URL from the ngrok terminal window
+NGROK_HOSTNAME = '541c09fc5753.ngrok-free.app' # ⚠️ Replace this with your actual ngrok hostname
+
+# Add the ngrok hostname to your allowed hosts
+ALLOWED_HOSTS.append(NGROK_HOSTNAME)
+
+# Add the full ngrok URL to the list of trusted origins for CSRF
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+    f'https://{NGROK_HOSTNAME}' # Add your ngrok URL here
+]

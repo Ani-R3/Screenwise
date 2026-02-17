@@ -2,39 +2,48 @@
 
 <header class="flex items-center justify-between px-6 py-6 md:px-8 lg:px-12">
     <!-- Logo -->
-    <a href="{% url 'home' %}" class="text-black text-xl font-bold tracking-tight">
+    <a href="{% url 'core:home' %}" class="text-black text-xl font-bold tracking-tight">
         Screenwise
     </a>
     
     <!-- Desktop Navigation -->
     <nav class="hidden md:flex items-center space-x-8">
-        <a href="{% url 'home' %}" 
-           class="transition-colors text-sm {% if request.resolver_match.url_name == 'home' %}text-black{% else %}text-gray-500 hover:text-black{% endif %}">
+        <a href="{% url 'core:home' %}" 
+           class="transition-colors text-sm {% if request.resolver_match.url_name == 'core:home' %}text-black{% else %}text-gray-500 hover:text-black{% endif %}">
             Home
         </a>
-        <a href="{% url 'dashboard' %}" 
+        <a href="{% url 'dashboard:dashboard' %}" 
            class="transition-colors text-sm {% if request.resolver_match.url_name == 'browse' %}text-black{% else %}text-gray-500 hover:text-black{% endif %}">
             Dashboard
         </a>
-        <a href="{% url 'upload' %}" 
-           class="transition-colors text-sm {% if request.resolver_match.url_name == 'upload' %}text-black{% else %}text-gray-500 hover:text-black{% endif %}">
+        <a href="{% url 'videos:upload' %}" 
+           class="transition-colors text-sm {% if request.resolver_match.url_name == 'videos:upload' %}text-black{% else %}text-gray-500 hover:text-black{% endif %}">
             Upload Video
         </a>
+
         {% if user.is_authenticated %}
-            <a href="{% url 'dashboard' %}" 
-               class="transition-colors text-sm {% if request.resolver_match.url_name == 'dashboard' %}text-black{% else %}text-gray-500 hover:text-black{% endif %}">
-                Dashboard
-            </a>
-            <a href="{% url 'logout' %}" 
-               class="transition-colors text-sm text-gray-500 hover:text-black">
-                Logout
-            </a>
+             <div class="flex items-center space-x-4">
+                <!-- Other links can go here if needed -->
+                <a href="{% url 'accounts:logout' %}" class="transition-colors text-sm text-gray-500 hover:text-black">
+                    Logout
+                </a>
+        
+                <!-- Profile Picture Link -->
+                <a href="{% url 'profiles:profile' username=user.username %}">
+                    <img class="h-9 w-9 rounded-full object-cover border-2 border-transparent hover:border-gray-300 transition" 
+                    src="{{ user.profile_pic.url }}" 
+                    alt="{{ user.username }}'s profile picture">
+                </a>
+            </div>
         {% else %}
-            <a href="{% url 'login' %}" 
-               class="transition-colors text-sm {% if request.resolver_match.url_name == 'login' %}text-black{% else %}text-gray-500 hover:text-black{% endif %}">
+            <a href="{% url 'accounts:login' %}" 
+                class="transition-colors text-sm {% if request.resolver_match.url_name == 'login' %}text-black{% else %}text-gray-500 hover:text-black{% endif %}">
                 Login
             </a>
         {% endif %}
+
+
+        
     </nav>
 
 
@@ -49,33 +58,32 @@
         </svg>
     </button>
 </header>
-
 <!-- Mobile Navigation -->
-<div class="md:hidden bg-white border-t border-gray-200 hidden" id="mobile-menu">
+<div class="md:hidden bg-white border-t border-gray-200 hidden absolute top-16 left-0 w-full z-50" id="mobile-menu">
     <nav class="px-6 py-4 space-y-4">
-        <a href="{% url 'home' %}" 
-           class="block transition-colors text-sm {% if request.resolver_match.url_name == 'home' %}text-black{% else %}text-gray-500 hover:text-black{% endif %}">
+        <a href="{% url 'core:home' %}" 
+           class="block transition-colors text-sm {% if request.resolver_match.url_name == 'core:home' %}text-black{% else %}text-gray-500 hover:text-black{% endif %}">
             Home
         </a>
-        <a href="{% url 'dashboard' %}" 
-           class="block transition-colors text-sm {% if request.resolver_match.url_name == 'browse' %}text-black{% else %}text-gray-500 hover:text-black{% endif %}">
+        <a href="{% url 'dashboard:dashboard' %}" 
+           class="block transition-colors text-sm {% if request.resolver_match.url_name == 'dashboard:dashboard' %}text-black{% else %}text-gray-500 hover:text-black{% endif %}">
             Dashboard
         </a>
-        <a href="{% url 'upload' %}" 
-           class="block transition-colors text-sm {% if request.resolver_match.url_name == 'upload' %}text-black{% else %}text-gray-500 hover:text-black{% endif %}">
+        <a href="{% url 'videos:upload' %}" 
+           class="block transition-colors text-sm {% if request.resolver_match.url_name == 'videos:upload' %}text-black{% else %}text-gray-500 hover:text-black{% endif %}">
             Upload Video
         </a>
         {% if user.is_authenticated %}
-            <a href="{% url 'dashboard' %}" 
-               class="block transition-colors text-sm {% if request.resolver_match.url_name == 'dashboard' %}text-black{% else %}text-gray-500 hover:text-black{% endif %}">
-                Dashboard
-            </a>
-            <a href="{% url 'logout' %}" 
+            <a href="{% url 'accounts:logout' %}" 
                class="block transition-colors text-sm text-gray-500 hover:text-black">
                 Logout
             </a>
+
+            <a href="{% url 'profiles:profile' username=user.username %}" 
+            class="block transition-colors text-sm text-gray-500 hover:text-black">
+                Profile</a>
         {% else %}
-            <a href="{% url 'login' %}" 
+            <a href="{% url 'accounts:login' %}" 
                class="block transition-colors text-sm {% if request.resolver_match.url_name == 'login' %}text-black{% else %}text-gray-500 hover:text-black{% endif %}">
                 Login
             </a>
@@ -83,7 +91,8 @@
     </nav>
 </div>
 
-<script>
+
+{% comment %} <script>
 document.addEventListener('DOMContentLoaded', () => {
     const mobileMenuButton = document.getElementById('mobile-menu-button');
     const mobileMenu = document.getElementById('mobile-menu');
@@ -96,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
         closeIcon.classList.toggle('hidden');  // swap to hamburger icon
     });
 });
-</script>
+</script> {% endcomment %}
 
 
 <!--

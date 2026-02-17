@@ -4,6 +4,78 @@
 {% block title %}Screenwise - Share your knowledge. Build your legacy.{% endblock %}
 
 {% block content %}
+
+{% if user.is_authenticated %}
+    <!-- ================================================== -->
+    <!-- LOGGED-IN VIEW: DYNAMIC YOUTUBE-STYLE FEED         -->
+    <!-- ================================================== -->
+    <main class="bg-gray-50 min-h-screen">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+            <!-- REELS / SHORTS SECTION (Horizontally Scrolling) -->
+            {% if reels %}
+            <section class="mb-16">
+                <div class="flex items-center mb-5 border-b border-gray-200 pb-3">
+                    <svg class="w-6 h-6 mr-3 text-red-600" fill="currentColor" viewBox="0 0 20 20"><path d="M5.5 16.5A1.5 1.5 0 104 15V5a1.5 1.5 0 103 0v10a1.5 1.5 0 00-1.5 1.5zM11.5 16.5a1.5 1.5 0 10-3 0v-5a1.5 1.5 0 103 0v5zM16 15a1.5 1.5 0 10-3 0V5a1.5 1.5 0 103 0v10z"></path></svg>
+                    <h2 class="text-2xl font-bold text-gray-800 tracking-tight">Shorts</h2>
+                </div>
+                
+                <div class="flex space-x-4 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">
+                    {% for video in reels %}
+                        <a href="{% url 'videos:video_detail' video_id=video.id %}" class="flex-shrink-0 w-44 sm:w-48 group">
+                            <div class="w-full aspect-[9/16] bg-gray-800 rounded-xl overflow-hidden shadow-lg transform transition-transform duration-300 group-hover:scale-105 group-hover:shadow-xl relative">
+                                {% if video.thumbnail %}
+                                    <img src="{{ video.thumbnail.url }}" alt="{{ video.title }}" class="w-full h-full object-cover">
+                                {% else %}
+                                    <div class="w-full h-full flex items-center justify-center bg-gray-700"><svg class="w-10 h-10 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></div>
+                                {% endif %}
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                                <div class="absolute bottom-0 left-0 p-3 text-white">
+                                    <h3 class="text-sm font-semibold leading-tight truncate-2-lines">{{ video.title }}</h3>
+                                </div>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            <!-- STANDARD VIDEOS SECTION (Grid) -->
+            <section>
+                <h2 class="text-2xl font-bold text-gray-800 tracking-tight mb-6 border-b border-gray-200 pb-3">Latest Videos</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
+                    {% for video in standard_videos %}
+                        <div class="group">
+                            <a href="{% url 'videos:video_detail' video_id=video.id %}">
+                                <div class="aspect-w-16 aspect-h-9 w-full bg-gray-800 rounded-xl overflow-hidden shadow-lg mb-3 transform transition-transform duration-300 group-hover:-translate-y-1 group-hover:shadow-2xl">
+                                    {% if video.thumbnail %}
+                                        <img src="{{ video.thumbnail.url }}" alt="{{ video.title }}" class="w-full h-full object-cover">
+                                    {% else %}
+                                        <div class="w-full h-full flex items-center justify-center bg-gray-700"><svg class="w-12 h-12 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></div>
+                                    {% endif %}
+                                </div>
+                            </a>
+                            <div class="flex items-start space-x-3">
+                                <a href="{% url 'profiles:profile' username=video.uploaded_by.username %}">
+                                    <img class="h-10 w-10 rounded-full object-cover flex-shrink-0" src="{{ video.uploaded_by.profile_pic.url }}" alt="">
+                                </a>
+                                <div>
+                                    <a href="{% url 'videos:video_detail' video_id=video.id %}" class="hover:text-indigo-600"><h3 class="text-base font-bold text-gray-900 leading-tight truncate-2-lines">{{ video.title }}</h3></a>
+                                    <a href="{% url 'profiles:profile' username=video.uploaded_by.username %}" class="hover:text-indigo-600"><p class="text-sm text-gray-600 mt-1">{{ video.uploaded_by.username }}</p></a>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        {% if not reels %}
+                            <div class="col-span-full text-center py-20"><p class="text-lg text-gray-500">No videos have been uploaded yet.</p></div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </main>
+
+{% else %}
 <!-- Hero Section -->
 <div class="flex-1 flex items-center justify-center px-6 py-20">
     <div class="text-center max-w-4xl">
@@ -18,7 +90,7 @@
         </p>
         
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="{% url 'upload' %}" class="bg-black text-white px-8 py-3 rounded-full hover:bg-gray-800 transition-colors text-sm font-medium">
+            <a href="{% url 'videos:upload' %}" class="bg-black text-white px-8 py-3 rounded-full hover:bg-gray-800 transition-colors text-sm font-medium">
                 Get Started
             </a>
             <button class="px-8 py-3 rounded-full border border-gray-300 hover:border-black transition-colors text-sm font-medium">
@@ -96,13 +168,14 @@
             Join thousands of creators who are already sharing their knowledge and building their legacy on Screenwise.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="{% url 'upload' %}" class="bg-black text-white px-8 py-3 rounded-full hover:bg-gray-800 transition-colors text-sm font-medium">
+            <a href="{% url 'videos:upload' %}" class="bg-black text-white px-8 py-3 rounded-full hover:bg-gray-800 transition-colors text-sm font-medium">
                 Upload Your First Video
             </a>
-            <a href="{% url 'login' %}" class="px-8 py-3 rounded-full border border-gray-300 hover:border-black transition-colors text-sm font-medium">
+            <a href="{% url 'accounts:login' %}" class="px-8 py-3 rounded-full border border-gray-300 hover:border-black transition-colors text-sm font-medium">
                 Create Account
             </a>
         </div>
     </div>
 </section>
+{% endif %}
 {% endblock %}

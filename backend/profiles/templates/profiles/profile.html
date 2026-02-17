@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ profile_user.username }}'s Profile{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="flex flex-col sm:flex-row items-center sm:items-start space-x-0 sm:space-x-8 mb-10">
+        <div class="flex-shrink-0 mb-4 sm:mb-0">
+            <img class="h-32 w-32 md:h-40 md:w-40 rounded-full object-cover border-4 border-white shadow-lg" 
+                 src="{{ profile_user.profile_pic.url }}" 
+                 alt="{{ profile_user.username }}'s profile picture">
+        </div>
+        <div class="flex flex-col items-center sm:items-start flex-grow">
+            <div class="flex items-center space-x-4 mb-4">
+                <h1 class="text-2xl md:text-3xl font-light text-gray-800">{{ profile_user.username }}</h1>
+                {% if is_owner %}
+                    <button onclick="toggleEditModal()" class="px-4 py-1.5 text-sm font-semibold bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 transition">Edit Profile</button>
+                {% endif %}
+            </div>
+            <div class="flex space-x-6 mb-4">
+                <div class="text-center">
+                    <span class="font-semibold">{{ uploaded_videos|length }}</span>
+                    <span class="text-gray-600">posts</span>
+                </div>
+            </div>
+            <div>
+                <p class="text-gray-800 text-center sm:text-left">{{ profile_user.bio|default:"No bio yet." }}</p>
+            </div>
+        </div>
+    </div>
+    <hr class="border-t border-gray-300 mb-8">
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 md:gap-4">
+        {% for video in uploaded_videos %}
+            <a href="{% url 'videos:video_detail' video_id=video.id %}">
+                <div class="aspect-w-1 aspect-h-1 bg-gray-200 rounded-md overflow-hidden group">
+                    {% if video.thumbnail %}
+                        <img class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-300" src="{{ video.thumbnail.url }}" alt="Thumbnail for {{ video.title }}">
+                    {% else %}
+                        <div class="flex items-center justify-center w-full h-full">
+                            <span class="text-gray-500 text-sm">No Thumbnail</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </a>
+        {% empty %}
+            <div class="col-span-2 sm:col-span-3 text-center py-12">
+                <p class="mt-1 text-sm text-gray-500">No videos uploaded yet.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% if is_owner %}
+<div id="editProfileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md m-4">
+        <h2 class="text-xl font-semibold mb-4">Edit Profile</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="space-y-4">
+                <div><label class="block text-sm font-medium text-gray-700">Profile Picture</label>{{ form.profile_pic }}</div>
+                <div><label class="block text-sm font-medium text-gray-700">Bio</label>{{ form.bio }}</div>
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" onclick="toggleEditModal()" class="px-4 py-2 text-sm font-semibold bg-gray-200 rounded-md">Cancel</button>
+                    <button type="submit" class="px-4 py-2 text-sm font-semibold text-white bg-black rounded-md">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    function toggleEditModal() {
+        document.getElementById('editProfileModal').classList.toggle('hidden');
+        document.getElementById('editProfileModal').classList.toggle('flex');
+    }
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block title %}{{ video.title }}{% endblock %}
+
+{% block content %}
+<main class="bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Main Content: Video Player and Details -->
+        <div class="lg:col-span-2">
+
+            <!-- ======================================================= -->
+            <!-- DYNAMIC VIDEO PLAYER: This is the updated section       -->
+            <!-- ======================================================= -->
+            {% if video.video_format == 'reel' %}
+                <!-- FOR REELS: Center a vertical player with a max height -->
+                <div class="flex justify-center mb-6">
+                    <!-- THIS IS THE FIX: Changed max-w-sm to max-w-xs -->
+                    <div class="w-full max-w-xs bg-black rounded-xl shadow-lg overflow-hidden">
+                        <div class="aspect-w-9 aspect-h-16">
+                             <video class="w-full h-full" controls autoplay>
+                                <source src="{{ video.video_file.url }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <!-- FOR STANDARD VIDEOS: Use the widescreen player -->
+                <div class="aspect-w-16 aspect-h-9 bg-black rounded-xl shadow-lg overflow-hidden mb-6">
+                    <video class="w-full h-full" controls autoplay>
+                        <source src="{{ video.video_file.url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            {% endif %}
+            <!-- ======================================================= -->
+            <!-- End of Dynamic Video Player Section                     -->
+            <!-- ======================================================= -->
+
+
+            <!-- Video Title -->
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight mb-4">{{ video.title }}</h1>
+            
+            <!-- Uploader Info and Actions -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-gray-200">
+                <div class="flex items-center space-x-3 mb-4 sm:mb-0">
+                    <a href="{% url 'profiles:profile' username=video.uploaded_by.username %}">
+                        <img class="h-12 w-12 rounded-full object-cover" src="{{ video.uploaded_by.profile_pic.url }}" alt="">
+                    </a>
+                    <div>
+                        <a href="{% url 'profiles:profile' username=video.uploaded_by.username %}" class="font-semibold text-gray-800 hover:text-indigo-600">{{ video.uploaded_by.username }}</a>
+                        <p class="text-sm text-gray-500">1.2K subscribers</p> <!-- Placeholder -->
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button class="px-4 py-2 text-sm font-semibold bg-gray-200 text-gray-800 rounded-full hover:bg-gray-300 transition">
+                        Like (1.5K) <!-- Placeholder -->
+                    </button>
+                    <button class="px-5 py-2 text-sm font-semibold bg-black text-white rounded-full hover:bg-gray-800 transition">
+                        Subscribe <!-- Placeholder -->
+                    </button>
+                </div>
+            </div>
+
+            <!-- Description Box -->
+            <div class="bg-gray-100 rounded-xl p-4 mt-6">
+                <p class="text-sm font-semibold text-gray-700 mb-2">Uploaded on {{ video.uploaded_at|date:"F j, Y" }}</p>
+                <p class="text-gray-800 whitespace-pre-wrap">{{ video.description|linebreaksbr|default:"No description provided." }}</p>
+            </div>
+        </div>
+
+        <!-- Sidebar: Recommended Videos -->
+        <div class="lg:col-span-1">
+            <h2 class="text-lg font-bold text-gray-900 mb-4">Up Next</h2>
+            <div class="space-y-4">
+                <!-- Placeholder for recommended videos loop -->
+                {% for i in "12345" %}
+                <a href="#" class="flex space-x-3 group">
+                    <div class="w-40 h-24 bg-gray-300 rounded-lg flex-shrink-0 overflow-hidden">
+                         <img src="https://placehold.co/400x225/1f2937/9ca3af?text=Next+Video" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-800 group-hover:text-indigo-600 leading-tight line-clamp-2">{{ i }}. The Next Big Thing in Web Development and Modern Technologies for 2025</h3>
+                        <p class="text-xs text-gray-500 mt-1">Another Creator</p>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Script for tracking video views (no changes here) -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // ... your tracking script ...
+});
+</script>
+{% endblock %}
+

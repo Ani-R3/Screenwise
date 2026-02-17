@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Upload Video - Screenwise{% endblock %}
+
+{% block content %}
+<div class="flex-1 px-6 py-20 md:px-8 lg:px-12">
+    <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-normal leading-tight mb-6">
+                <span class="text-black">Upload your knowledge.</span><br />
+                <span class="text-gray-400">Inspire others to learn.</span>
+            </h1>
+            <!-- This is the line that has been added back -->
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                Share your expertise through video tutorials and help build a global community of learners.
+            </p>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
+            <form method="post" enctype="multipart/form-data" class="space-y-8">
+                {% csrf_token %}
+                
+                {% if form.errors %}
+                <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <p class="text-red-600 text-sm">{{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Video Upload Area -->
+                <div class="space-y-4">
+                    <label for="{{ form.video_file.id_for_label }}" class="text-base font-medium">Upload Video</label>
+                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center hover:border-gray-400 transition-colors" id="video-drop-zone">
+                         <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                        </svg>
+                        <p class="text-lg text-gray-600 mb-2">
+                            Drag and drop your video here, or click to browse
+                        </p>
+                        <p class="text-sm text-gray-500 mb-4">
+                            Supports MP4, MOV, AVI up to 500MB
+                        </p>
+                        <button type="button" class="border border-gray-300 hover:border-black px-4 py-2 rounded-lg transition-colors" onclick="document.getElementById('{{ form.video_file.id_for_label }}').click()">Choose File</button>
+                        {{ form.video_file }}
+                    </div>
+                </div>
+
+                <!-- Video Details -->
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label for="{{ form.title.id_for_label }}" class="text-base font-medium">Video Title</label>
+                        {{ form.title }}
+                    </div>
+                    <div class="space-y-2">
+                        <label for="{{ form.category.id_for_label }}" class="text-base font-medium">Category</label>
+                        {{ form.category }}
+                    </div>
+                </div>
+
+                <!-- NEW: Hidden field for 'Other' category -->
+                <div class="space-y-2 hidden" id="other-category-wrapper">
+                    <label for="{{ form.other_category.id_for_label }}" class="text-base font-medium">{{ form.other_category.label }}</label>
+                    {{ form.other_category }}
+                </div>
+
+                <div class="space-y-2"><label for="{{ form.description.id_for_label }}" class="text-base font-medium">Description</label>{{ form.description }}</div>
+                <div class="space-y-2"><label for="{{ form.keywords.id_for_label }}" class="text-base font-medium">Keywords</label>{{ form.keywords }}</div>
+
+                <!-- Thumbnail -->
+                <div class="space-y-2">
+                    <label for="{{ form.thumbnail.id_for_label }}" class="text-base font-medium">Thumbnail (Optional)</label>
+                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-gray-400 transition-colors" id="thumb-drop-zone">
+                        <svg class="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                        <p class="text-gray-600 mb-2" id="thumb-drop-zone-text">Upload custom thumbnail</p>
+                        <button type="button" class="border border-gray-300 hover:border-black px-4 py-2 rounded-lg transition-colors text-sm" onclick="document.getElementById('{{ form.thumbnail.id_for_label }}').click()">Choose Image</button>
+                        {{ form.thumbnail }}
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="flex gap-4 pt-6">
+                    <button type="button" class="flex-1 h-12 border border-gray-300 text-gray-500 rounded-lg cursor-not-allowed">Save as Draft (Coming Soon)</button>
+                    <button type="submit" class="flex-1 h-12 bg-black text-white hover:bg-gray-800 rounded-lg transition-colors">Publish Video</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Generic function to handle drag-and-drop for a file input
+function setupDragAndDrop(dropZoneId, fileInputId, textElementId) {
+    const dropZone = document.getElementById(dropZoneId);
+    const fileInput = document.getElementById(fileInputId);
+    const textElement = document.getElementById(textElementId);
+
+    if (!dropZone || !fileInput) return;
+
+    // Prevent default browser behaviors
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false);
+        document.body.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false);
+    });
+
+    // Highlight drop area on drag over
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.add('border-black', 'bg-gray-50'), false);
+    });
+
+    // Unhighlight on drag leave or drop
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.remove('border-black', 'bg-gray-50'), false);
+    });
+
+    // Handle dropped files
+    dropZone.addEventListener('drop', e => {
+        if (e.dataTransfer.files.length > 0) {
+            fileInput.files = e.dataTransfer.files;
+            updateFileName(e.dataTransfer.files[0].name, textElement);
+        }
+    }, false);
+
+    // Handle file selection via button click
+    fileInput.addEventListener('change', e => {
+        if (e.target.files.length > 0) {
+            updateFileName(e.target.files[0].name, textElement);
+        }
+    });
+
+    function updateFileName(fileName, element) {
+        if (element) {
+            element.textContent = `Selected: ${fileName}`;
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Setup for the video and thumbnail drop zones
+    setupDragAndDrop('video-drop-zone', '{{ form.video_file.id_for_label }}', 'video-drop-zone-text');
+    setupDragAndDrop('thumb-drop-zone', '{{ form.thumbnail.id_for_label }}', 'thumb-drop-zone-text');
+
+    // --- SCRIPT FOR CATEGORY DROPDOWN ---
+    const categorySelect = document.getElementById('category-select');
+    const otherCategoryWrapper = document.getElementById('other-category-wrapper');
+
+    if (categorySelect && otherCategoryWrapper) {
+        categorySelect.addEventListener('change', function() {
+            if (this.value === 'other') {
+                otherCategoryWrapper.classList.remove('hidden');
+            } else {
+                otherCategoryWrapper.classList.add('hidden');
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
+

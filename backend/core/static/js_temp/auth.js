@@ -3,7 +3,8 @@ class ScreenwiseAuth {
         this.isSignUpMode = false;
         this.initializeElements();
         this.bindEvents();
-        this.updateFormValidation();
+        // Check context for errors and switch to signup mode if needed (for server-side errors)
+        this.checkInitialMode(); 
     }
 
     initializeElements() {
@@ -28,66 +29,40 @@ class ScreenwiseAuth {
         // Messages
         this.toggleMessage = document.getElementById('toggleMessage');
         this.passwordError = document.getElementById('passwordError');
-
-        // Social buttons
-        this.googleLoginBtn = document.getElementById('googleLoginBtn');
-        this.xLoginBtn = document.getElementById('xLoginBtn');
-        this.googleSignUpBtn = document.getElementById('googleSignUpBtn');
-        this.xSignUpBtn = document.getElementById('xSignUpBtn');
+        
+        // Ensure all buttons are enabled by default for Django submission (we rely on the 'required' HTML attribute)
+        this.signUpBtn.removeAttribute('disabled');
     }
 
     bindEvents() {
         // Toggle between login and signup
         this.toggleBtn.addEventListener('click', () => this.toggleForms());
 
-        // Form submissions
-        this.loginFormElement.addEventListener('submit', (e) => this.handleLogin(e));
-        this.signUpFormElement.addEventListener('submit', (e) => this.handleSignUp(e));
-
-        // Input validation
-        this.loginEmail.addEventListener('input', () => this.validateLoginForm());
-        this.loginPassword.addEventListener('input', () => this.validateLoginForm());
-        this.signUpEmail.addEventListener('input', () => this.validateSignUpForm());
+        // Input validation (only used for password match visual error now)
         this.signUpPassword.addEventListener('input', () => this.validateSignUpForm());
         this.signUpConfirmPassword.addEventListener('input', () => this.validateSignUpForm());
-
-        // Keyboard navigation
-        this.addKeyboardNavigation();
-
-        // Social login buttons
-        this.googleLoginBtn.addEventListener('click', () => this.handleGoogleLogin());
-        this.xLoginBtn.addEventListener('click', () => this.handleXLogin());
-        this.googleSignUpBtn.addEventListener('click', () => this.handleGoogleLogin());
-        this.xSignUpBtn.addEventListener('click', () => this.handleXLogin());
-    }
-
-    addKeyboardNavigation() {
-        // Login form keyboard navigation
-        this.loginPassword.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && this.isLoginFormValid()) {
-                this.handleLogin(e);
-            }
-        });
-
-        // Sign up form keyboard navigation
-        this.signUpConfirmPassword.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && this.isSignUpFormValid()) {
-                this.handleSignUp(e);
-            }
-        });
-
-        // Toggle form with keyboard
-        this.toggleBtn.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                this.toggleForms();
-            }
-        });
-    }
-
-    toggleForms() {
-        this.isSignUpMode = !this.isSignUpMode;
         
+        // We removed all explicit form.addEventListener('submit') calls and manual 
+        // login/signup validation to let the native HTML form submit to Django.
+    }
+
+    ccheckInitialMode() {
+        // 🚨 REPLACE the old checkInitialMode with this: 🚨
+        const body = document.querySelector('body');
+        if (body.dataset.signupError === 'true') {
+            this.isSignUpMode = true;
+        }
+
+        // This will now correctly show the signup form if 'isSignUpMode' was set to true
+        this.toggleForms(false); // Do not clear forms on initial load
+    }
+
+    
+    toggleForms(shouldClear = true) {
+        if (shouldClear) {
+             this.isSignUpMode = !this.isSignUpMode;
+        }
+
         if (this.isSignUpMode) {
             this.loginForm.style.display = 'none';
             this.signUpForm.style.display = 'block';
@@ -100,53 +75,30 @@ class ScreenwiseAuth {
             this.toggleBtn.textContent = 'Sign up';
         }
         
-        this.clearForms();
+        if (shouldClear) {
+            this.clearForms();
+        }
     }
 
     clearForms() {
-        // Clear login form
+        // Clear inputs
         this.loginEmail.value = '';
         this.loginPassword.value = '';
-        
-        // Clear signup form
         this.signUpEmail.value = '';
         this.signUpPassword.value = '';
         this.signUpConfirmPassword.value = '';
         
-        // Reset validation
-        this.validateLoginForm();
-        this.validateSignUpForm();
+        // Reset validation display
         this.hidePasswordError();
     }
 
-    validateLoginForm() {
-        const isValid = this.isLoginFormValid();
-        this.loginBtn.disabled = !isValid;
-    }
-
+    // Only validation logic remaining is for password match visual feedback
     validateSignUpForm() {
-        const isValid = this.isSignUpFormValid();
-        this.signUpBtn.disabled = !isValid;
-        
-        // Check password match
         if (this.signUpConfirmPassword.value && !this.passwordsMatch()) {
             this.showPasswordError();
-            this.signUpConfirmPassword.classList.add('error');
         } else {
             this.hidePasswordError();
-            this.signUpConfirmPassword.classList.remove('error');
         }
-    }
-
-    isLoginFormValid() {
-        return this.loginEmail.value.trim() && this.loginPassword.value.trim();
-    }
-
-    isSignUpFormValid() {
-        return this.signUpEmail.value.trim() && 
-               this.signUpPassword.value.trim() && 
-               this.signUpConfirmPassword.value.trim() && 
-               this.passwordsMatch();
     }
 
     passwordsMatch() {
@@ -161,51 +113,13 @@ class ScreenwiseAuth {
         this.passwordError.style.display = 'none';
     }
 
-    handleLogin(event) {
-        event.preventDefault();
-        
-        if (!this.isLoginFormValid()) {
-            return;
-        }
-
-        const email = this.loginEmail.value.trim();
-        const password = this.loginPassword.value.trim();
-        
-        console.log('Login attempt:', { email });
-        
-        // Here you would typically make an API call to your authentication service
-        alert(`Login attempt for: ${email}`);
-    }
-
-    handleSignUp(event) {
-        event.preventDefault();
-        
-        if (!this.isSignUpFormValid()) {
-            return;
-        }
-
-        const email = this.signUpEmail.value.trim();
-        const password = this.signUpPassword.value.trim();
-        
-        console.log('Sign up attempt:', { email });
-        
-        // Here you would typically make an API call to your authentication service
-        alert(`Sign up attempt for: ${email}`);
-    }
+    // Removed all handleLogin/handleSignUp methods to rely on native form submission.
 
     handleGoogleLogin() {
-        console.log('Google login clicked');
-        
-        // Here you would integrate with Google OAuth
-        // Example: window.location.href = '/auth/google';
         alert('Google login would be initiated here');
     }
 
     handleXLogin() {
-        console.log('X (Twitter) login clicked');
-        
-        // Here you would integrate with X OAuth
-        // Example: window.location.href = '/auth/twitter';
         alert('X login would be initiated here');
     }
 }

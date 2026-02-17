@@ -1,1 +1,8 @@
+django
+celery
+redis
+sentence-transformers
+scikit-learn
+torch
 pillow
+moviepy==1.0.3
